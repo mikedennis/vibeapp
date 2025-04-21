@@ -28,38 +28,21 @@ Ensure the following are installed on your system:
 *   **Docker Desktop:** Required to run the containerized dependencies managed by .NET Aspire.
 *   **.NET Aspire Workload:** If not already installed, run `dotnet workload install aspire`.
 
-### Initial Project Setup / Verification
-
-**CRITICAL:** The React frontend project MUST exist at the correct location `EmailApplication/emailapplication.client` and be correctly initialized (containing `package.json`, `tsconfig.json`, `public/`, etc.).
-
-*   **Verify:** Navigate to `EmailApplication/emailapplication.client` and check its contents (e.g., using `ls`).
-*   **If `package.json` and other core files are MISSING:** The React project setup is incomplete. You MUST fix this first:
-    1.  Navigate into the incomplete directory: `cd EmailApplication/emailapplication.client`
-    2.  Run create-react-app *in place* to generate the missing files/structure:
-        ```bash
-        npx create-react-app . --template typescript
-        ```
-        *(Note: If this fails due to existing `src` or `Dockerfile`, you might need to temporarily move those out, run the command, then move them back.)*
-    3.  **Re-apply Code Changes:** This command might overwrite default `src` files. You MUST manually re-apply the code changes made during development (creating `AuthService.ts`, `AuthProvider.tsx`, `ApiService.ts`, modifying `App.tsx`, `index.tsx`) and add the `Dockerfile` back into this `EmailApplication/emailapplication.client` directory.
-    4.  **Install Extra Dependencies:** Still inside `EmailApplication/emailapplication.client`, run:
-        ```bash
-        npm install oidc-client-ts react-router-dom
-        npm install --save-dev @types/node
-        ```
-*   **If `package.json` and core files EXIST:** The project is likely set up correctly. Proceed to the next section.
-
 ### Building and Running Locally
 
-**(Assuming React project structure at `EmailApplication/emailapplication.client` is complete)**
-
-1.  **Clone/Copy Project:** Ensure the complete source code with the correct structure is present.
+1.  **Clone the Repository:**
+    ```bash
+    git clone <repository-url>
+    cd <repository-directory> # Navigate into the cloned project folder
+    ```
+    Replace `<repository-url>` with the actual URL and `<repository-directory>` with the folder name created by the clone (usually derived from the repo name).
 2.  **Install Client Dependencies:**
     *   Navigate to the React client directory: `cd EmailApplication/emailapplication.client`
     *   Install required Node.js packages based on the existing `package.json` file:
         ```bash
         npm install
         ```
-    *   Navigate back to the solution root: `cd ..`
+    *   Navigate back to the solution root: `cd ../..` # Assuming you are in the client dir
 3.  **Restore .NET Dependencies:**
     *   Run from the solution root (`EmailApplication`):
         ```bash
