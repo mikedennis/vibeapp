@@ -48,15 +48,57 @@ Ensure the following are installed on your system:
         ```bash
         dotnet restore EmailApplication.sln
         ```
-4.  **Initial Keycloak Setup (First Run Only):**
-    *   Follow the Keycloak setup steps detailed previously (create realm, client, user, configure mappers).
-5.  **Run the Application via Aspire AppHost:**
+4.  **Run the Application via Aspire AppHost:**
     *   Navigate to the solution root directory (`EmailApplication`).
     *   Run the AppHost project:
-      ```bash
-      dotnet run --project EmailApplication.AppHost
-      ```
-    *   Access the application components via the URLs provided in the Aspire Dashboard.
+        ```bash
+        dotnet run --project EmailApplication.AppHost
+        ```
+    *   This command starts all the application services, including the Keycloak container. Note the Keycloak service endpoint URL displayed in the Aspire Dashboard.
+5.  **Initial Keycloak Setup (First Run Only):**
+    *   Once the application is running (after the previous step), access the Keycloak Admin Console using the URL noted from the Aspire Dashboard.
+    *   Perform the one-time setup detailed in the **"Initial Keycloak Setup (Local Development)"** section below.
+
+### Initial Keycloak Setup (Local Development)
+
+When running the application locally for the first time using `.NET Aspire`, a Keycloak container will be started (as part of step 4 in "Building and Running Locally"). You need to configure this running instance:
+
+1.  **Access Keycloak Admin Console:**
+    *   Find the Keycloak service endpoint in the Aspire Dashboard (usually something like `http://localhost:<port>`). This is available after running `dotnet run --project EmailApplication.AppHost`.
+    *   Go to the Admin Console (typically `http://localhost:<port>/admin`).
+    *   Log in using the default credentials (often `admin`/`admin`, unless changed via environment variables in `AppHost`). You might be prompted to change the password on first login.
+2.  **Create a Realm:**
+    *   Hover over the "master" realm name in the top-left corner and click "Add realm".
+    *   Enter a name for your realm (e.g., `emailapp-realm`) and click "Create".
+3.  **Create the React Client:**
+    *   Ensure you are in your new realm (`emailapp-realm`).
+    *   Navigate to "Clients" in the left-hand menu and click "Create".
+    *   **Client ID:** `emailapp-client` (This needs to match the `client_id` used in the React app's OIDC configuration).
+    *   **Client Protocol:** `openid-connect`
+    *   **Root URL:** Leave blank or set if needed.
+    *   Click "Save".
+    *   On the client settings page:
+        *   **Access Type:** `public`
+        *   **Standard Flow Enabled:** `ON`
+        *   **Direct Access Grants Enabled:** `ON`
+        *   **Implicit Flow Enabled:** `ON` (Sometimes needed depending on exact OIDC flow)
+        *   **Valid Redirect URIs:** Add the URL where Keycloak should redirect after login. Based on the default React template, this is likely `http://localhost:5173/*` (or whatever port your React app runs on). Add this value.
+        *   **Web Origins:** Add the base URL of your React app (e.g., `http://localhost:5173`). Use `+` to add more if needed.
+        *   Click "Save".
+4.  **Configure Client Scopes / Mappers (Optional but Recommended):**
+    *   Go to the "Client Scopes" tab for `emailapp-client`.
+    *   Select the `email` scope (usually present by default under "Assigned Default Client Scopes").
+    *   Go to the "Mappers" tab for this scope.
+    *   Ensure standard OIDC claims like `email`, `profile`, `preferred_username` are mapped (they usually are by default). Add them if missing, using "Add Mapper" > "By Configuration" > "User Property" or "User Attribute".
+5.  **Create a User:**
+    *   Navigate to "Users" in the left-hand menu and click "Add user".
+    *   Fill in the required fields (Username is mandatory). Set "Email verified" to `ON` and enter an email address (this will be used as the 'From' address).
+    *   Click "Save".
+    *   Go to the "Credentials" tab for the new user.
+    *   Set a password and confirm it. Ensure "Temporary" is `OFF` unless you want the user to reset it on first login.
+    *   Click "Set Password".
+
+This completes the basic Keycloak setup needed for the React app to authenticate users and the API to validate tokens.
 
 ## Preparing for Production Deployment (Kubernetes)
 
