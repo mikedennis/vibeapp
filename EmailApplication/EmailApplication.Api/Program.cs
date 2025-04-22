@@ -10,8 +10,9 @@ using Microsoft.Extensions.DependencyInjection; // Add for AddServiceDiscovery
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire components
-// builder.AddServiceDefaults(); // Commented out due to build/linter errors
+builder.AddServiceDefaults(); // Commented out due to build/linter errors
 builder.AddRedisClient("statestore"); 
+builder.AddRabbitMQClient("rabbitmq"); // Add RabbitMQ DI registration
 // builder.Services.AddServiceDiscovery(); // Commented out as it didn't resolve errors
 
 // --- Authentication --- 

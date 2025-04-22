@@ -3,7 +3,7 @@ using Aspire.Hosting;
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Add service defaults
-builder.AddProject<Projects.EmailApplication_ServiceDefaults>("servicedefaults");
+// builder.AddProject<Projects.EmailApplication_ServiceDefaults>("servicedefaults"); // ServiceDefaults is referenced by other projects, not run directly
 
 // Add RabbitMQ container
 var rabbitMq = builder.AddRabbitMQ("rabbitmq")

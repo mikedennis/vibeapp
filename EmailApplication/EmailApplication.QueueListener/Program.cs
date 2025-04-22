@@ -7,9 +7,10 @@ using Microsoft.Extensions.ServiceDiscovery; // Add for GetServiceUri
 var builder = Host.CreateApplicationBuilder(args);
 
 // Add service defaults & Aspire components
-// builder.AddServiceDefaults(); // Commented out due to build/linter errors
+builder.AddServiceDefaults(); // Commented out due to build/linter errors
 // builder.AddRabbitMQ("rabbitmq"); // Removed
 builder.AddRedisClient("statestore"); // Add Redis client
+builder.AddRabbitMQClient("rabbitmq"); // Add RabbitMQ DI registration
 // builder.Services.AddServiceDiscovery(); // Commented out as it didn't resolve errors
 
 /* Commenting out SMTP config due to build errors resolving GetServiceUri
