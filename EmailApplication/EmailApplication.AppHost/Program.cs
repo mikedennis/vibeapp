@@ -11,8 +11,8 @@ var rabbitMq = builder.AddRabbitMQ("rabbitmq")
 
 // Add MailDev container
 var mailDev = builder.AddContainer("maildev", "maildev/maildev")
-    .WithEndpoint(port: 1080, scheme: "http", name: "http") // Web UI
-    .WithEndpoint(port: 1025, name: "smtp"); // SMTP port
+    .WithEndpoint(targetPort: 1080, port: 1080, scheme: "http", name: "http") // Web UI
+    .WithEndpoint(targetPort: 1025, port: 1025, name: "smtp"); // SMTP port
 
 // Add Redis container for status tracking
 var redis = builder.AddRedis("statestore");
