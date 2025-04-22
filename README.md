@@ -164,9 +164,9 @@ As of the last update, the application **builds successfully**, but required com
 
 **3. Issue: Service Defaults (`AddServiceDefaults`)**
 
-*   **Symptoms:** At various points, the linter and compiler reported errors that `AddServiceDefaults` could not be found on `WebApplicationBuilder` or `HostApplicationBuilder`, despite project references and `using` statements appearing correct. While the final build succeeded with `AddServiceDefaults` uncommented, its correct functioning might be linked to the `GetServiceUri` failures.
-*   **Workaround:** `AddServiceDefaults()` is currently *uncommented* in both `Api/Program.cs` and `QueueListener/Program.cs`, but its effectiveness is questionable given the `GetServiceUri` failures.
-*   **Impact:** Core Aspire features provided by `ServiceDefaults` (like default health checks, telemetry, resilience configuration, and potentially fixing the service discovery issues) might not be fully active.
+*   **Symptoms:** Previously, errors occurred where `AddServiceDefaults` could not be found by the compiler, and the `AppHost` incorrectly attempted to run the `ServiceDefaults` project directly. The direct execution issue is resolved by removing the project reference from `AppHost`. 
+*   **Workaround:** `AddServiceDefaults()` is now uncommented and called correctly within both `Api/Program.cs` and `QueueListener/Program.cs`. 
+*   **Impact (Revised):** While the method is now called, its full effectiveness remains uncertain. Core Aspire features configured by `ServiceDefaults` (like default health checks, telemetry, resilience) should be active, but the persistent failure of `GetServiceUri` (Issue #1) suggests that the service discovery aspects might not be fully configured or functional yet.
 
 **Troubleshooting Steps Taken:**
 
