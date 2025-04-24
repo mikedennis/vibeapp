@@ -11,10 +11,11 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire components
-builder.AddServiceDefaults(); // Commented out due to build/linter errors
+builder.AddServiceDefaults(); 
 builder.AddRedisClient("statestore"); 
 builder.AddRabbitMQClient("rabbitmq"); // Add RabbitMQ DI registration
-// builder.Services.AddServiceDiscovery(); // Commented out as it didn't resolve errors
+
+builder.Services.AddProblemDetails();
 
 // --- Authentication --- 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

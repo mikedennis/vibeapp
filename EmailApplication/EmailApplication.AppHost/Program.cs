@@ -3,11 +3,10 @@ using EmailApplication.AppHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-// Add service defaults
-// builder.AddProject<Projects.EmailApplication_ServiceDefaults>("servicedefaults"); // ServiceDefaults is referenced by other projects, not run directly
-
 // Add RabbitMQ container
-var rabbitMq = builder.AddRabbitMQ("rabbitmq")
+var username = builder.AddParameter("username", "guest");
+var password = builder.AddParameter("password", "guest");
+var rabbitMq = builder.AddRabbitMQ("rabbitmq", username, password)
     .WithManagementPlugin();
 
 // Add MailDev custom resource
