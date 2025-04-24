@@ -23,7 +23,8 @@ var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak")
     .WithEnvironment("KC_HOSTNAME_STRICT", "false") // Allow access via localhost/container name
     .WithEnvironment("KC_PROXY", "edge") // Required if running behind a proxy like Aspire's
     .WithEndpoint(targetPort: 8080, port: 8088, scheme: "http", name: "http") // Expose Keycloak's HTTP port (mapped to 8088 on host)
-    .WithArgs("start-dev"); // Start Keycloak in dev mode
+    .WithArgs("start-dev") // Start Keycloak in dev mode
+    .WithVolume("/source/volumes/keycloak-data", "/opt/keycloak/data"); // NOTE update this to a folder on your local machine
 
 // Add API project
 var apiService = builder.AddProject<Projects.EmailApplication_Api>("emailapi")

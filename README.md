@@ -100,6 +100,15 @@ When running the application locally for the first time using `.NET Aspire`, a K
 
 Note: The same Keycloak client (e.g., `emailapp-client`) can be used for both the React frontend and the API. Ensure that the client is configured with the appropriate scopes (`openid`, `profile`, `email`) and that both the frontend and API use the same client ID in their OIDC/JWT configuration.
 
+> **Note:**
+> If you want your Keycloak realm, clients, and users to persist between runs, update the Keycloak container definition in `EmailApplication.AppHost/Program.cs` to use a host directory that exists on your machine for the data volume. For example:
+>
+> ```csharp
+> .WithVolume("/absolute/path/on/your/machine/keycloak-data", "/opt/keycloak/data")
+> ```
+>
+> Replace `/absolute/path/on/your/machine/keycloak-data` with a directory that exists and is writable. If the directory does not exist, create it before running the application. This will ensure your Keycloak configuration is not lost between runs.
+
 ## Preparing for Production Deployment (Kubernetes)
 
 The application includes Dockerfiles for containerizing the services. However, the development setup relies heavily on Aspire managing local containers for dependencies.
