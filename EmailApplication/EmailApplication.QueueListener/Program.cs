@@ -14,31 +14,27 @@ builder.AddServiceDefaults();
 builder.AddRedisClient("statestore");
 builder.AddRabbitMQClient("rabbitmq");
 
-// Configure SmtpConfig using IConfiguration and Aspire environment variables
+// Configure SmtpConfig using Aspire connection string
 builder.Services.Configure<SmtpConfig>(config =>
 {
-    // Read the specific environment variable injected by AppHost
-    var smtpEndpointUrl = builder.Configuration["SMTP_ENDPOINT_URL"];
-
-    if (!string.IsNullOrEmpty(smtpEndpointUrl))
+    var smtpUri = builder.Configuration.GetConnectionString("maildev");
+    if (!string.IsNullOrEmpty(smtpUri))
     {
         try
         {
-            var uri = new Uri(smtpEndpointUrl, UriKind.Absolute);
+            var uri = new Uri(smtpUri);
             config.Host = uri.Host;
             config.Port = uri.Port;
-            Console.WriteLine($"[QueueListener] SMTP Configured from env var: Host={config.Host}, Port={config.Port}");
+            Console.WriteLine($"[QueueListener] SMTP Configured from connection string: Host={config.Host}, Port={config.Port}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[QueueListener] Warning: Could not parse SMTP endpoint URL '{smtpEndpointUrl}'. Using defaults. Error: {ex.Message}");
-            // Keep defaults
+            Console.WriteLine($"[QueueListener] Warning: Could not parse SMTP connection string '{smtpUri}'. Using defaults. Error: {ex.Message}");
         }
     }
     else
     {
-        Console.WriteLine("[QueueListener] Warning: SMTP endpoint env var 'SMTP_ENDPOINT_URL' not found. Using defaults.");
-        // Keep defaults
+        Console.WriteLine("[QueueListener] Warning: SMTP connection string for 'maildev' not found. Using defaults.");
     }
 });
 
