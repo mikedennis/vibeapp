@@ -31,6 +31,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true
         };
+        options.RequireHttpsMetadata = false; // For local dev
     });
 
 builder.Services.AddAuthorization();
