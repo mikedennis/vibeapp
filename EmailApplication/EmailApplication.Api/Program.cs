@@ -76,6 +76,14 @@ builder.Services.AddSwaggerGen(c =>
             new[] { "openid", "profile", "email" }
         }
     });
+
+    var keycloakAuthority = builder.Configuration["Keycloak__Authority"];
+    Console.WriteLine($"[DIAGNOSTIC] Keycloak__Authority: {keycloakAuthority}");
+
+    if (string.IsNullOrEmpty(keycloakAuthority))
+    {
+        throw new InvalidOperationException("Keycloak__Authority is not set. Make sure you are running under Aspire and the environment variable is injected.");
+    }
 });
 
 var app = builder.Build();
