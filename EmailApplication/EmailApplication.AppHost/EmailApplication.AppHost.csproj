@@ -1,11 +1,11 @@
-<Project Sdk="Aspire.AppHost.Sdk/9.2.0">
+<Project Sdk="Microsoft.NET.Sdk">
+<Sdk Name="Aspire.AppHost.Sdk" Version="9.2.0" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <IsAspireHost>true</IsAspireHost>
     <UserSecretsId>7a7aa17d-38f2-4cf5-9c40-53a0b5cc9f21</UserSecretsId>
   </PropertyGroup>
 
