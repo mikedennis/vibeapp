@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Aspire.AppHost.Sdk/9.2.0">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,16 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.2.2" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="8.2.2" />
-    <PackageReference Include="Aspire.Hosting.NodeJs" Version="8.2.2" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="8.2.2" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.2.0" />
+    <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.2.0" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="9.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EmailApplication.Api\EmailApplication.Api.csproj" />
     <ProjectReference Include="..\EmailApplication.QueueListener\EmailApplication.QueueListener.csproj" />
     <ProjectReference Include="..\EmailApplication.ServiceDefaults\EmailApplication.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\EmailApplication.MailDev.Hosting\EmailApplication.MailDev.Hosting.csproj" />
   </ItemGroup>
 
 </Project>

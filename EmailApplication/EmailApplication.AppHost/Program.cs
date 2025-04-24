@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using EmailApplication.MailDev.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -9,10 +10,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 var rabbitMq = builder.AddRabbitMQ("rabbitmq")
     .WithManagementPlugin();
 
-// Add MailDev container
-var mailDev = builder.AddContainer("maildev", "maildev/maildev")
-    .WithEndpoint(targetPort: 1080, port: 1080, scheme: "http", name: "http") // Web UI
-    .WithEndpoint(targetPort: 1025, port: 1025, name: "smtp"); // SMTP port
+// Add MailDev custom resource
+var mailDev = builder.AddMailDev("maildev");
 
 // Add Redis container for status tracking
 var redis = builder.AddRedis("statestore");
@@ -35,8 +34,8 @@ var apiService = builder.AddProject<Projects.EmailApplication_Api>("emailapi")
 // Add QueueListener project
 var queueListener = builder.AddProject<Projects.EmailApplication_QueueListener>("queuelistener")
     .WithReference(rabbitMq)
-    // SMTP details (host/port) are accessed via Service Discovery in the listener, no direct reference needed here.
-    .WithReference(redis);
+    .WithReference(redis)
+    .WithReference(mailDev);
 
 // Add React client project
 builder.AddNpmApp("reactfrontend", "../emailapplication.client")

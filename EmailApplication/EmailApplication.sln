@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailApplication.Api", "Ema
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailApplication.QueueListener", "EmailApplication.QueueListener\EmailApplication.QueueListener.csproj", "{ED06F9FD-724F-4E99-8717-C66943DB662D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailApplication.MailDev.Hosting", "EmailApplication.MailDev.Hosting\EmailApplication.MailDev.Hosting.csproj", "{83EBC4F1-EAB7-4816-9704-129B067B4492}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{ED06F9FD-724F-4E99-8717-C66943DB662D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED06F9FD-724F-4E99-8717-C66943DB662D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED06F9FD-724F-4E99-8717-C66943DB662D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83EBC4F1-EAB7-4816-9704-129B067B4492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83EBC4F1-EAB7-4816-9704-129B067B4492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83EBC4F1-EAB7-4816-9704-129B067B4492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83EBC4F1-EAB7-4816-9704-129B067B4492}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

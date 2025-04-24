@@ -17,8 +17,8 @@ builder.AddRabbitMQClient("rabbitmq");
 // Configure SmtpConfig using IConfiguration and Aspire environment variables
 builder.Services.Configure<SmtpConfig>(config =>
 {
-    // Configuration keys use ":" as hierarchy separator
-    var smtpEndpointUrl = builder.Configuration["services:maildev:smtp:0"];
+    // Read the specific environment variable injected by AppHost
+    var smtpEndpointUrl = builder.Configuration["SMTP_ENDPOINT_URL"];
 
     if (!string.IsNullOrEmpty(smtpEndpointUrl))
     {
@@ -32,13 +32,13 @@ builder.Services.Configure<SmtpConfig>(config =>
         catch (Exception ex)
         {
             Console.WriteLine($"[QueueListener] Warning: Could not parse SMTP endpoint URL '{smtpEndpointUrl}'. Using defaults. Error: {ex.Message}");
-            // Keep defaults (Host="localhost", Port=1025)
+            // Keep defaults
         }
     }
     else
     {
-        Console.WriteLine("[QueueListener] Warning: SMTP endpoint env var 'services:maildev:smtp:0' not found. Using defaults.");
-        // Keep defaults (Host="localhost", Port=1025)
+        Console.WriteLine("[QueueListener] Warning: SMTP endpoint env var 'SMTP_ENDPOINT_URL' not found. Using defaults.");
+        // Keep defaults
     }
 });
 
