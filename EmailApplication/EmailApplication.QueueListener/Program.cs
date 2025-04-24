@@ -1,11 +1,4 @@
 using EmailApplication.QueueListener;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection; // Add for GetRequiredService
-using Microsoft.Extensions.Hosting; // Add for AddRedisClient
-using Microsoft.Extensions.ServiceDiscovery; // Add for GetServiceUri
-using Microsoft.Extensions.Options; // Add for IOptions used in SmtpConfig
-using System;
-using System.Net;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -43,13 +36,3 @@ builder.Services.AddHostedService<EmailReceiverService>();
 
 var host = builder.Build();
 host.Run();
-
-// --- Type Definitions --- 
-// Removed duplicate SmtpConfig class definition; it's defined in EmailReceiverService.cs
-/*
-public class SmtpConfig
-{
-    public string Host { get; set; } = "localhost"; // Default values
-    public int Port { get; set; } = 1025;
-}
-*/
