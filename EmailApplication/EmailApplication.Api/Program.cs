@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using StackExchange.Redis; // Add Redis using
 using Microsoft.Extensions.Configuration; // Add for GetServiceUri
 using Microsoft.Extensions.DependencyInjection; // Add for AddServiceDiscovery
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +47,10 @@ builder.Services.AddAuthorization();
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); // Requires Swashbuckle.AspNetCore package
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Email API", Version = "v1" });
+});
 
 var app = builder.Build();
 
@@ -54,7 +58,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger(); // Requires Swashbuckle.AspNetCore package
-    app.UseSwaggerUI(); // Requires Swashbuckle.AspNetCore package
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Email API V1");
+        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+    });
 }
 
 app.UseHttpsRedirection();

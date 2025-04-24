@@ -18,7 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EmailApplication.Api\EmailApplication.Api.csproj" />
     <ProjectReference Include="..\EmailApplication.QueueListener\EmailApplication.QueueListener.csproj" />
-    <ProjectReference Include="..\EmailApplication.ServiceDefaults\EmailApplication.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\EmailApplication.ServiceDefaults\EmailApplication.ServiceDefaults.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
 
 </Project>
