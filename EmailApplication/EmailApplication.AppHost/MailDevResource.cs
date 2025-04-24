@@ -1,6 +1,6 @@
 using Aspire.Hosting.ApplicationModel;
 
-namespace EmailApplication.MailDev.Hosting;
+namespace EmailApplication.AppHost;
 
 public sealed class MailDevResource(string name) : ContainerResource(name), IResourceWithConnectionString
 {

@@ -1,5 +1,5 @@
 using Aspire.Hosting;
-using EmailApplication.MailDev.Hosting;
+using EmailApplication.AppHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
 

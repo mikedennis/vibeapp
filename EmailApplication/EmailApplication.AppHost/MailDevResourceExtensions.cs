@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace EmailApplication.MailDev.Hosting;
+namespace EmailApplication.AppHost;
 
 public static class MailDevResourceExtensions
 {
