@@ -39,9 +39,17 @@ builder.Services.AddAuthorization();
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
+var keycloakAuthority = builder.Configuration["Keycloak__Authority"];
+Console.WriteLine($"[DIAGNOSTIC] Keycloak__Authority: {keycloakAuthority}");
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Email API", Version = "v1" });
+
+    if (string.IsNullOrEmpty(keycloakAuthority))
+    {
+        throw new InvalidOperationException("Keycloak__Authority is not set. Make sure you are running under Aspire and the environment variable is injected.");
+    }
 
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
@@ -50,8 +58,8 @@ builder.Services.AddSwaggerGen(c =>
         {
             AuthorizationCode = new OpenApiOAuthFlow
             {
-                AuthorizationUrl = new Uri($"{builder.Configuration["Keycloak__Authority"]}/protocol/openid-connect/auth"),
-                TokenUrl = new Uri($"{builder.Configuration["Keycloak__Authority"]}/protocol/openid-connect/token"),
+                AuthorizationUrl = new Uri($"{keycloakAuthority}/protocol/openid-connect/auth"),
+                TokenUrl = new Uri($"{keycloakAuthority}/protocol/openid-connect/token"),
                 Scopes = new Dictionary<string, string>
                 {
                     { "openid", "OpenID Connect scope" },
@@ -76,14 +84,6 @@ builder.Services.AddSwaggerGen(c =>
             new[] { "openid", "profile", "email" }
         }
     });
-
-    var keycloakAuthority = builder.Configuration["Keycloak__Authority"];
-    Console.WriteLine($"[DIAGNOSTIC] Keycloak__Authority: {keycloakAuthority}");
-
-    if (string.IsNullOrEmpty(keycloakAuthority))
-    {
-        throw new InvalidOperationException("Keycloak__Authority is not set. Make sure you are running under Aspire and the environment variable is injected.");
-    }
 });
 
 var app = builder.Build();
