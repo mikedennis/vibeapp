@@ -109,6 +109,15 @@ Note: The same Keycloak client (e.g., `emailapp-client`) can be used for both th
 >
 > Replace `/absolute/path/on/your/machine/keycloak-data` with a directory that exists and is writable. If the directory does not exist, create it before running the application. This will ensure your Keycloak configuration is not lost between runs.
 
+> **Note:**
+> To view the user secrets (such as the Keycloak admin password) generated for the containers, run the following command in the AppHost project directory:
+>
+> ```bash
+> dotnet user-secrets list --project EmailApplication.AppHost
+> ```
+>
+> This will display the secrets Aspire has generated for your local development containers, including credentials for Keycloak and other services.
+
 ## Preparing for Production Deployment (Kubernetes)
 
 The application includes Dockerfiles for containerizing the services. However, the development setup relies heavily on Aspire managing local containers for dependencies.
