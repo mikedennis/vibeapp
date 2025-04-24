@@ -1,5 +1,5 @@
 using Aspire.Hosting;
-using EmailApplication.AppHost;
+using EmailApplication.MailDevHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -28,7 +28,8 @@ var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak")
 // Add API project
 var apiService = builder.AddProject<Projects.EmailApplication_Api>("emailapi")
     .WithReference(rabbitMq)
-    .WithReference(redis);
+    .WithReference(redis)
+    .WithEnvironment("Keycloak__Authority", keycloak.GetEndpoint("http") + "/realms/emailapp-realm");
 
 // Add QueueListener project
 var queueListener = builder.AddProject<Projects.EmailApplication_QueueListener>("queuelistener")

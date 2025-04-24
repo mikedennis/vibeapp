@@ -19,28 +19,19 @@ builder.Services.AddProblemDetails();
 
 // --- Authentication --- 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(); // Base registration
-    
-/* Commenting out manual config due to GetServiceUri build error
-builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
-{
-    var keycloakUrl = builder.Configuration.GetServiceUri("keycloak", "http");
-    // ... rest of config ... 
-});
-*/
-
-// Minimal JWT config to allow build
-builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
-{
-    options.TokenValidationParameters = new()
+    .AddJwtBearer(options =>
     {
-        ValidateAudience = true, 
-        ValidAudience = "emailapp-api",
-        ValidateIssuer = false, 
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = false 
-    };
-});
+        options.Authority = builder.Configuration["Keycloak__Authority"];
+        options.Audience = "emailapp-api"; // or your actual API client ID
+        options.TokenValidationParameters = new()
+        {
+            ValidateAudience = true,
+            ValidAudience = "emailapp-api",
+            ValidateIssuer = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true
+        };
+    });
 
 builder.Services.AddAuthorization();
 // ----------------------
