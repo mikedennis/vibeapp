@@ -98,7 +98,7 @@ When running the application locally for the first time using `.NET Aspire`, a K
     *   Set a password and confirm it. Ensure "Temporary" is `OFF` unless you want the user to reset it on first login.
     *   Click "Set Password".
 
-This completes the basic Keycloak setup needed for the React app to authenticate users and the API to validate tokens.
+Note: The same Keycloak client (e.g., `emailapp-client`) can be used for both the React frontend and the API. Ensure that the client is configured with the appropriate scopes (`openid`, `profile`, `email`) and that both the frontend and API use the same client ID in their OIDC/JWT configuration.
 
 ## Preparing for Production Deployment (Kubernetes)
 

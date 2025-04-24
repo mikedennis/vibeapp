@@ -22,11 +22,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.Authority = builder.Configuration["Keycloak__Authority"];
-        options.Audience = "emailapp-api"; // or your actual API client ID
+        options.Audience = "emailapp-client"; // Use the same client as the React app
         options.TokenValidationParameters = new()
         {
             ValidateAudience = true,
-            ValidAudience = "emailapp-api",
+            ValidAudience = "emailapp-client",
             ValidateIssuer = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true
@@ -42,6 +42,40 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Email API", Version = "v1" });
+
+    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            AuthorizationCode = new OpenApiOAuthFlow
+            {
+                AuthorizationUrl = new Uri($"{builder.Configuration["Keycloak__Authority"]}/protocol/openid-connect/auth"),
+                TokenUrl = new Uri($"{builder.Configuration["Keycloak__Authority"]}/protocol/openid-connect/token"),
+                Scopes = new Dictionary<string, string>
+                {
+                    { "openid", "OpenID Connect scope" },
+                    { "profile", "Profile scope" },
+                    { "email", "Email scope" }
+                }
+            }
+        }
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "oauth2"
+                }
+            },
+            new[] { "openid", "profile", "email" }
+        }
+    });
 });
 
 var app = builder.Build();
@@ -54,6 +88,9 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Email API V1");
         c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+        c.OAuthClientId("emailapp-client"); // Use the same client as the React app
+        c.OAuthUsePkce();
+        c.OAuthScopeSeparator(" ");
     });
 }
 
