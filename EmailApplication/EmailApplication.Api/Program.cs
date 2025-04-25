@@ -1,12 +1,7 @@
 using System.Security.Claims; // For ClaimTypes
 using System.Text.Json;
-using Microsoft.AspNetCore.Authentication.JwtBearer; // For AddJwtBearer
-using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using StackExchange.Redis; // Add Redis using
-using Microsoft.Extensions.Configuration; // Add for GetServiceUri
-using Microsoft.Extensions.DependencyInjection; // Add for AddServiceDiscovery
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,99 +12,34 @@ builder.AddRabbitMQClient("rabbitmq"); // Add RabbitMQ DI registration
 
 builder.Services.AddProblemDetails();
 
-// --- Authentication --- 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.Authority = builder.Configuration["Keycloak__Authority"];
-        options.Audience = "emailapp-client"; // Use the same client as the React app
-        options.TokenValidationParameters = new()
-        {
-            ValidateAudience = true,
-            ValidAudience = "emailapp-client",
-            ValidateIssuer = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true
-        };
-        options.RequireHttpsMetadata = false; // For local dev
-    });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthentication()
+                .AddKeycloakJwtBearer(
+                    serviceName: "keycloak",  // this is the aspire service
+                    realm: "emailapp-realm",  // this is the keycloak realm
+                    configureOptions: options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = "emailapp-client";  // this is the keycloak client
+                });
+
+builder.Services.AddAuthorizationBuilder();
+
 // ----------------------
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddEndpointsApiExplorer();
-var keycloakAuthority = builder.Configuration["Keycloak__Authority"];
-Console.WriteLine($"[DIAGNOSTIC] Keycloak__Authority: {keycloakAuthority}");
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Email API", Version = "v1" });
-
-    if (string.IsNullOrEmpty(keycloakAuthority))
-    {
-        throw new InvalidOperationException("Keycloak__Authority is not set. Make sure you are running under Aspire and the environment variable is injected.");
-    }
-
-    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        Type = SecuritySchemeType.OAuth2,
-        Flows = new OpenApiOAuthFlows
-        {
-            AuthorizationCode = new OpenApiOAuthFlow
-            {
-                AuthorizationUrl = new Uri($"{keycloakAuthority}/protocol/openid-connect/auth"),
-                TokenUrl = new Uri($"{keycloakAuthority}/protocol/openid-connect/token"),
-                Scopes = new Dictionary<string, string>
-                {
-                    { "openid", "OpenID Connect scope" },
-                    { "profile", "Profile scope" },
-                    { "email", "Email scope" }
-                }
-            }
-        }
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "oauth2"
-                }
-            },
-            new[] { "openid", "profile", "email" }
-        }
-    });
-});
-
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(); // Requires Swashbuckle.AspNetCore package
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Email API V1");
-        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
-        c.OAuthClientId("emailapp-client"); // Use the same client as the React app
-        c.OAuthUsePkce();
-        c.OAuthScopeSeparator(" ");
-    });
+    app.UseSwagger();
 }
 
 app.UseHttpsRedirection();
-
-// --- Add Auth middleware --- 
-// IMPORTANT: Must be between UseRouting (implicit) and MapEndpoints
-app.UseAuthentication();
-app.UseAuthorization();
-// ---------------------------
 
 // Define the API endpoint
 // Note: EmailRequest type is defined at the bottom of the file
@@ -189,8 +119,9 @@ app.MapGet("/email-status/{id}", async (string id, IConnectionMultiplexer redisC
     return Results.Ok(new { EmailId = id, Status = status.ToString() });
 })
 .RequireAuthorization() // Require authentication for this endpoint too
-.WithName("GetEmailStatus")
-.WithOpenApi();
+.WithName("GetEmailStatus");
+
+app.MapDefaultEndpoints();
 
 app.Run();
 
